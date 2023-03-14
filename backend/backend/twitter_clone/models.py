@@ -7,9 +7,9 @@ class Tweet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='tweets')
-    likes = models.ManyToManyField(
+    liked_by = models.ManyToManyField(
         User, related_name='liked_tweets', blank=True)
-    retweets = models.ManyToManyField(
+    retweeted_by = models.ManyToManyField(
         User, related_name='retweeted_tweets', blank=True, through='Retweet')
 
     def __str__(self):
