@@ -1,16 +1,30 @@
-from django.contrib.auth.models import User
-from rest_framework import generics, permissions, status, views
+
+from rest_framework import generics, permissions, status
 from rest_framework.authentication import TokenAuthentication
-from .models import Tweet, Follow, Like, Notification, Retweet
-from .serializers import TweetSerializer, CommentSerializer, UserSerializer, FollowSerializer, LikeSerializer, NotificationSerializer, RetweetSerializer, RegistrationSerializer, LoginSerializer, LogoutSerializer
+from .models import Tweet, Follow, Like, Notification, Retweet, UserProfile
+from .serializers import TweetSerializer, CommentSerializer, FollowSerializer, LikeSerializer, NotificationSerializer, RetweetSerializer, RegistrationSerializer, LoginSerializer, LogoutSerializer, UserProfileSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth import login, logout
 from rest_framework.authtoken.views import ObtainAuthToken
+from .permissions import IsOwnerOrReadOnly
+
+
+class UserProfileDetail(generics.RetrieveUpdateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+    authentication_classes = [TokenAuthentication]
+
+
+class UserProfileList(generics.ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    authentication_classes = [TokenAuthentication]
 
 
 class RegistrationView(generics.CreateAPIView):
-    permission_classes = [permissions.AllowAny]
     serializer_class = RegistrationSerializer
 
 
@@ -50,7 +64,7 @@ class TweetList(generics.ListCreateAPIView):
 class TweetDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tweet.objects.all()
     serializer_class = TweetSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [TokenAuthentication]
 
 
@@ -68,22 +82,10 @@ class CommentList(generics.ListCreateAPIView):
         serializer.save(author=self.request.user, tweet=tweet)
 
 
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    authentication_classes = [TokenAuthentication]
-
-
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    authentication_classes = [TokenAuthentication]
-
-
 class FollowList(generics.ListCreateAPIView):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [TokenAuthentication]
 
     def perform_create(self, serializer):
@@ -93,14 +95,14 @@ class FollowList(generics.ListCreateAPIView):
 class FollowDetail(generics.RetrieveDestroyAPIView):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [TokenAuthentication]
 
 
 class LikeList(generics.ListCreateAPIView):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [TokenAuthentication]
 
     def perform_create(self, serializer):
@@ -110,14 +112,14 @@ class LikeList(generics.ListCreateAPIView):
 class LikeDetail(generics.RetrieveDestroyAPIView):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [TokenAuthentication]
 
 
 class RetweetList(generics.ListCreateAPIView):
     queryset = Retweet.objects.all()
     serializer_class = RetweetSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     authentication_classes = [TokenAuthentication]
 
     def perform_create(self, serializer):
@@ -127,7 +129,7 @@ class RetweetList(generics.ListCreateAPIView):
 class RetweetDetail(generics.RetrieveDestroyAPIView):
     queryset = Retweet.objects.all()
     serializer_class = RetweetSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [TokenAuthentication]
 
 

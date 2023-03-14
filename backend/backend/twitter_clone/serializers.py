@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Tweet, Comment, Follow, Like, Notification, Retweet
+from .models import Tweet, Comment, Follow, Like, Notification, Retweet, UserProfile
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 
@@ -9,6 +9,15 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username')
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ('id', 'user', 'bio', 'location',
+                  'birth_date', 'profile_picture')
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -31,6 +40,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password']
         )
+        UserProfile.objects.create(user=user)
         return user
 
 

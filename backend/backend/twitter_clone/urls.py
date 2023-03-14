@@ -1,26 +1,33 @@
-from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
-from . import views
+from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
+from .views import (RegistrationView, LoginView, LogoutView,
+                    TweetList, TweetDetail, CommentList,
+                    FollowList, FollowDetail, LikeList,
+                    LikeDetail, RetweetList, RetweetDetail,
+                    NotificationList, NotificationDetail,
+                    UserProfileDetail, UserProfileList)
 
 urlpatterns = [
-    path('register/', views.RegistrationView.as_view()),
-    path('login/', views.LoginView.as_view()),
-    path('logout/', views.LogoutView.as_view()),
-    path('get-token/', obtain_auth_token),
-    path('tweets/', views.TweetList.as_view()),
-    path('tweets/<int:pk>/', views.TweetDetail.as_view()),
-    path('tweets/<int:pk>/comments/', views.CommentList.as_view()),
-    path('users/', views.UserList.as_view()),
-    path('users/<int:pk>/', views.UserDetail.as_view()),
-    path('follows/', views.FollowList.as_view()),
-    path('follows/<int:pk>/', views.FollowDetail.as_view()),
-    path('likes/', views.LikeList.as_view()),
-    path('likes/<int:pk>/', views.LikeDetail.as_view()),
-    path('retweets/', views.RetweetList.as_view()),
-    path('retweets/<int:pk>/', views.RetweetDetail.as_view()),
-    path('notifications/', views.NotificationList.as_view()),
-    path('notifications/<int:pk>/', views.NotificationDetail.as_view()),
+    path('register/', RegistrationView.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('tweets/', TweetList.as_view(), name='tweet-list'),
+    path('tweets/<int:pk>/', TweetDetail.as_view(), name='tweet-detail'),
+    path('tweets/<int:pk>/comments/', CommentList.as_view(), name='comment-list'),
+    path('follows/', FollowList.as_view(), name='follow-list'),
+    path('follows/<int:pk>/', FollowDetail.as_view(), name='follow-detail'),
+    path('likes/', LikeList.as_view(), name='like-list'),
+    path('likes/<int:pk>/', LikeDetail.as_view(), name='like-detail'),
+    path('retweets/', RetweetList.as_view(), name='retweet-list'),
+    path('retweets/<int:pk>/', RetweetDetail.as_view(), name='retweet-detail'),
+    path('notifications/', NotificationList.as_view(), name='notification-list'),
+    path('notifications/<int:pk>/', NotificationDetail.as_view(),
+         name='notification-detail'),
+    path('profiles/', UserProfileList.as_view(), name='profile-list'),
+    path('profiles/<int:pk>/', UserProfileDetail.as_view(),
+         name='profile-detail'),
+    path('get-token/', obtain_auth_token, name='api_token_auth'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
