@@ -1,8 +1,13 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
+    path('register/', views.RegistrationView.as_view()),
+    path('login/', views.LoginView.as_view()),
+    path('logout/', views.LogoutView.as_view()),
+    path('get-token/', obtain_auth_token),
     path('tweets/', views.TweetList.as_view()),
     path('tweets/<int:pk>/', views.TweetDetail.as_view()),
     path('tweets/<int:pk>/comments/', views.CommentList.as_view()),
