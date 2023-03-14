@@ -10,7 +10,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 
 
 class RegistrationView(generics.CreateAPIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [permissions.AllowAny]
     serializer_class = RegistrationSerializer
 
 
@@ -29,7 +29,7 @@ class LoginView(ObtainAuthToken):
 
 class LogoutView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         request.user.auth_token.delete()
