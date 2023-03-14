@@ -2,12 +2,15 @@
 from rest_framework import generics, permissions, status
 from rest_framework.authentication import TokenAuthentication
 from .models import Tweet, Follow, Like, Notification, Retweet, UserProfile
+from django.contrib.auth.models import User
 from .serializers import TweetSerializer, CommentSerializer, FollowSerializer, LikeSerializer, NotificationSerializer, RetweetSerializer, RegistrationSerializer, LoginSerializer, LogoutSerializer, UserProfileSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth import login, logout
 from rest_framework.authtoken.views import ObtainAuthToken
 from .permissions import IsOwnerOrReadOnly
+from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
 
 
 class UserProfileDetail(generics.RetrieveUpdateAPIView):
@@ -24,7 +27,7 @@ class UserProfileList(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
 
 
-class RegistrationView(generics.CreateAPIView):
+class Registration(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
 
 
@@ -97,6 +100,23 @@ class FollowDetail(generics.RetrieveDestroyAPIView):
     serializer_class = FollowSerializer
     permission_classes = [IsOwnerOrReadOnly]
     authentication_classes = [TokenAuthentication]
+
+
+class FollowUser(generics.CreateAPIView):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def perform_create(self, serializer):
+        follower = self.request.user
+        followed_id = self.kwargs['pk']
+        followed = get_object_or_404(User, pk=followed_id)
+
+        if follower == followed:
+            raise ValidationError("You cannot follow yourself")
+
+        serializer.save(follower=follower, followed=followed)
 
 
 class LikeList(generics.ListCreateAPIView):

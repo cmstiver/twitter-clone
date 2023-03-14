@@ -1,15 +1,15 @@
 from rest_framework.urlpatterns import format_suffix_patterns
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import (RegistrationView, LoginView, LogoutView,
+from .views import (Registration, LoginView, LogoutView,
                     TweetList, TweetDetail, CommentList,
                     FollowList, FollowDetail, LikeList,
                     LikeDetail, RetweetList, RetweetDetail,
                     NotificationList, NotificationDetail,
-                    UserProfileDetail, UserProfileList)
+                    UserProfileDetail, UserProfileList, FollowUser)
 
 urlpatterns = [
-    path('register/', RegistrationView.as_view(), name='register'),
+    path('register/', Registration.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('tweets/', TweetList.as_view(), name='tweet-list'),
@@ -17,6 +17,7 @@ urlpatterns = [
     path('tweets/<int:pk>/comments/', CommentList.as_view(), name='comment-list'),
     path('follows/', FollowList.as_view(), name='follow-list'),
     path('follows/<int:pk>/', FollowDetail.as_view(), name='follow-detail'),
+    path('follow/<int:user_id>/', FollowUser.as_view(), name='follow_user'),
     path('likes/', LikeList.as_view(), name='like-list'),
     path('likes/<int:pk>/', LikeDetail.as_view(), name='like-detail'),
     path('retweets/', RetweetList.as_view(), name='retweet-list'),
