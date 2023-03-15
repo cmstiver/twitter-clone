@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import UserProfile
+from . import models
 
-# admin.site.register()
+admin.site.register(models.Tweet)
