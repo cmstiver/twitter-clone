@@ -5,3 +5,4 @@ twitter-clone.code-workspace
 **/dist
 *.log
 **/node_modules
+**/.env
