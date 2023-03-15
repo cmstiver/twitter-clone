@@ -54,3 +54,31 @@ class TweetDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class TweetReplyListView(generics.ListCreateAPIView):
+    serializer_class = serializers.TweetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        tweet_id = self.kwargs['tweet_id']
+        return models.Tweet.objects.filter(parent_tweet_id=tweet_id)
+
+    def perform_create(self, serializer):
+        tweet_id = self.kwargs['tweet_id']
+        parent_tweet = models.Tweet.objects.get(id=tweet_id)
+        serializer.save(author=self.request.user, parent_tweet=parent_tweet)
+
+
+class TweetLikesListView(generics.ListCreateAPIView):
+    serializer_class = serializers.TweetLikeSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        tweet_id = self.kwargs['tweet_id']
+        return models.Like.objects.filter(tweet=tweet_id)
+
+    def perform_create(self, serializer):
+        tweet_id = self.kwargs['tweet_id']
+        tweet = models.Tweet.objects.get(id=tweet_id)
+        serializer.save(user=self.request.user, tweet=tweet)

@@ -75,3 +75,15 @@ class TweetSerializer(serializers.ModelSerializer):
         model = models.Tweet
         fields = ('id', 'content', 'author', 'timestamp')
         read_only_fields = ('id', 'timestamp')
+
+
+class TweetLikeSerializer(serializers.ModelSerializer):
+    user_id = serializers.PrimaryKeyRelatedField(
+        read_only=True)
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True, source='user.username')
+    tweet = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = models.Like
+        fields = ['user_id', 'user', 'tweet']
