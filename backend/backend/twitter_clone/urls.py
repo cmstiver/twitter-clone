@@ -6,7 +6,9 @@ from rest_framework.authtoken.views import ObtainAuthToken
 urlpatterns = [
     path('register/', views.UserRegistrationView.as_view(), name='register'),
     path('login/', ObtainAuthToken.as_view()),
-    path('edit-profile/', views.UserUpdateView.as_view(), name='edit-profile')
+    path('edit-profile/', views.UserUpdateView.as_view(), name='edit-profile'),
+    path('change_password/', views.ChangePasswordView.as_view(),
+         name='change_password'),
     #     path('tweets/', views.TweetList.as_view(), name='tweet-list'),
     #     path('tweets/<int:pk>/', views.TweetDetail.as_view(), name='tweet-detail'),
     #     path('tweets/<int:pk>/comments/',
