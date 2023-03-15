@@ -2,3 +2,6 @@
 **/venv
 twitter-clone.code-workspace
 **/migrations
+**/dist
+*.log
+**/node_modules
