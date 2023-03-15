@@ -17,6 +17,8 @@ class UserProfile(models.Model):
 
 class Tweet(models.Model):
     content = models.TextField(max_length=280)
+    parent_tweet = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -45,16 +47,6 @@ class Retweet(models.Model):
 
     def __str__(self):
         return f"{self.user.username} retweeted {self.tweet.content}"
-
-
-class Comment(models.Model):
-    content = models.TextField(max_length=280)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.content
 
 
 class Follow(models.Model):
