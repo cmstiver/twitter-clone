@@ -5,15 +5,18 @@ from . import models
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+
     class Meta:
         model = models.UserProfile
-        fields = ('bio', 'location', 'birth_date', 'profile_picture')
+        fields = ['username', 'bio', 'location',
+                  'birth_date', 'profile_picture']
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ['username', 'email', 'password']
         extra_kwargs = {
             'username': {'max_length': 15},
             'email': {'required': False, 'allow_blank': True},
@@ -39,7 +42,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'profile')
+        fields = ['username', 'email', 'profile']
         extra_kwargs = {
             'username': {'max_length': 15},
             'email': {'required': False, 'allow_blank': True}
@@ -69,21 +72,53 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class TweetSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+    user = serializers.StringRelatedField(
+        read_only=True, source='user.username')
 
     class Meta:
         model = models.Tweet
-        fields = ('id', 'content', 'author', 'timestamp')
-        read_only_fields = ('id', 'timestamp')
+        fields = ['id', 'content', 'user', 'timestamp']
+        read_only_fields = ['id', 'timestamp']
 
 
 class TweetLikeSerializer(serializers.ModelSerializer):
     user_id = serializers.PrimaryKeyRelatedField(
         read_only=True)
-    user = serializers.PrimaryKeyRelatedField(
+    user = serializers.StringRelatedField(
         read_only=True, source='user.username')
     tweet = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.Like
-        fields = ['user_id', 'user', 'tweet']
+        fields = ['id', 'user_id', 'user', 'tweet']
+
+
+class TweetRetweetSerializer(serializers.ModelSerializer):
+    user_id = serializers.PrimaryKeyRelatedField(
+        read_only=True)
+    user = serializers.StringRelatedField(
+        read_only=True, source='user.username')
+    tweet = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = models.Like
+        fields = ['id', 'user_id', 'user', 'tweet']
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    follower = serializers.StringRelatedField(
+        read_only=True, source='follower.username')
+    followed = serializers.StringRelatedField(
+        read_only=True, source='followed.username')
+
+    class Meta:
+        model = models.Follow
+        fields = ['follower', 'followed']
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Notification
+        fields = ['id', 'recipient', 'sender',
+                  'tweet', 'type', 'timestamp', 'seen']
+        read_only_fields = ['id', 'timestamp']

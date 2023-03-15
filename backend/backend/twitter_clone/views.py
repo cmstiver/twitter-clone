@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from . import serializers, models
 from django.contrib.auth import update_session_auth_hash
 from .permissions import IsOwnerOrReadOnly
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -44,7 +46,7 @@ class TweetListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        serializer.save(user=self.request.user)
 
 
 class TweetDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -53,7 +55,19 @@ class TweetDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
 
     def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
+        serializer.save(user=self.request.user)
+
+
+class FollowingTweetsListView(generics.ListAPIView):
+    serializer_class = serializers.TweetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        following_users = user.following.values_list('followed', flat=True)
+        queryset = models.Tweet.objects.filter(
+            Q(user__in=following_users) | Q(retweet__user__in=following_users))
+        return queryset
 
 
 class TweetReplyListView(generics.ListCreateAPIView):
@@ -80,5 +94,95 @@ class TweetLikesListView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         tweet_id = self.kwargs['tweet_id']
-        tweet = models.Tweet.objects.get(id=tweet_id)
-        serializer.save(user=self.request.user, tweet=tweet)
+        tweet = get_object_or_404(models.Tweet, id=tweet_id)
+        user = self.request.user
+        like = models.Like.objects.filter(tweet=tweet, user=user).first()
+
+        if like:
+            like.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            serializer.save(user=user, tweet=tweet)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class TweetRetweetListView(generics.ListCreateAPIView):
+    serializer_class = serializers.TweetLikeSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        tweet_id = self.kwargs['tweet_id']
+        return models.Retweet.objects.filter(tweet=tweet_id)
+
+    def perform_create(self, serializer):
+        tweet_id = self.kwargs['tweet_id']
+        tweet = get_object_or_404(models.Tweet, id=tweet_id)
+        user = self.request.user
+        retweet = models.Retweet.objects.filter(tweet=tweet, user=user).first()
+
+        if retweet:
+            retweet.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            serializer.save(user=user, tweet=tweet)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class FollowListView(generics.ListCreateAPIView):
+    serializer_class = serializers.FollowSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return models.Follow.objects.filter(followed=user_id)
+
+    def perform_create(self, serializer):
+        user_id = self.kwargs['user_id']
+        user = get_object_or_404(User, id=user_id)
+        follower = self.request.user
+
+        if follower == user:
+            return Response({'error': 'You cannot follow yourself!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            follow = models.Follow.objects.get(
+                follower=follower, followed=user)
+            follow.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except models.Follow.DoesNotExist:
+            serializer.save(follower=follower, followed=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class UserProfileDetailView(generics.RetrieveAPIView):
+    serializer_class = serializers.UserProfileSerializer
+    lookup_field = 'user_id'
+
+    def get_queryset(self):
+        queryset = models.UserProfile.objects.all()
+        user_id = self.kwargs['user_id']
+        queryset = queryset.filter(user=user_id)
+        return queryset
+
+
+class NotificationListView(generics.ListAPIView):
+    serializer_class = serializers.NotificationSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        return models.Notification.objects.filter(recipient=user, seen=False)
+
+
+class NotificationMarkAsSeenView(views.APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def post(self, request):
+        unseen_notifications = models.Notification.objects.filter(
+            recipient=request.user, seen=False)
+
+        for notification in unseen_notifications:
+            notification.seen = True
+            notification.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
