@@ -31,7 +31,7 @@ VITE_APP_DIR = os.path.join(BASE_DIR.parent.parent, 'frontend')
 SECRET_KEY = env['django']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
