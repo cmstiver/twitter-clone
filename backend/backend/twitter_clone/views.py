@@ -132,12 +132,21 @@ class FollowListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        user_id = self.kwargs['user_id']
-        return models.Follow.objects.filter(followed=user_id)
+        user_id = self.kwargs.get('user_id', None)
+        if user_id:
+            user = get_object_or_404(User, pk=user_id)
+        else:
+            user = self.request.user
+
+        return models.Follow.objects.filter(followed=user)
 
     def perform_create(self, serializer):
-        user_id = self.kwargs['user_id']
-        user = get_object_or_404(User, id=user_id)
+        user_id = self.kwargs.get('user_id', None)
+        if user_id:
+            user = get_object_or_404(User, id=user_id)
+        else:
+            user = self.request.user
+
         follower = self.request.user
 
         if follower == user:
@@ -155,38 +164,43 @@ class FollowListView(generics.ListCreateAPIView):
 
 class UserProfileDetailView(generics.RetrieveAPIView):
     serializer_class = serializers.UserProfileSerializer
-    lookup_field = 'user_id'
-
-    def get_queryset(self):
-        queryset = models.UserProfile.objects.all()
-        user_id = self.kwargs['user_id']
-        queryset = queryset.filter(user=user_id)
-        return queryset
-
-
-class CurrentUserProfileView(generics.RetrieveAPIView):
-    serializer_class = serializers.UserProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    queryset = models.UserProfile.objects.all()
 
     def get_object(self):
-        return self.request.user.profile
+        user_id = self.kwargs.get('user_id', None)
+        if user_id:
+            user = get_object_or_404(User, pk=user_id)
+        else:
+            user = self.request.user
+
+        return get_object_or_404(models.UserProfile, user=user)
 
 
-class CurrentUserLikeListView(generics.ListAPIView):
+class UserLikeListView(generics.ListAPIView):
     serializer_class = serializers.TweetLikeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
+        user_id = self.kwargs.get('user_id', None)
+        if user_id:
+            user = get_object_or_404(User, pk=user_id)
+        else:
+            user = self.request.user
+
         return models.Like.objects.filter(user=user)
 
 
-class CurrentUserRepliesListView(generics.ListAPIView):
+class UserRepliesListView(generics.ListAPIView):
     serializer_class = serializers.TweetSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
+        user_id = self.kwargs.get('user_id', None)
+        if user_id:
+            user = get_object_or_404(User, pk=user_id)
+        else:
+            user = self.request.user
+
         return models.Tweet.objects.filter(user=user, parent_tweet__isnull=False)
 
 

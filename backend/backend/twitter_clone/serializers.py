@@ -4,12 +4,18 @@ from rest_framework import serializers
 from . import models
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email',]
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username')
+    user = UserSerializer()
 
     class Meta:
         model = models.UserProfile
-        fields = ['username', 'bio', 'location',
+        fields = ['user', 'bio', 'location',
                   'birth_date', 'profile_picture']
 
 

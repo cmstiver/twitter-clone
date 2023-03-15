@@ -6,3 +6,4 @@ twitter-clone.code-workspace
 *.log
 **/node_modules
 **/.env
+backend/media/profile_pictures
