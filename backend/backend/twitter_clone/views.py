@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions, views, status
 from rest_framework.response import Response
-from . import serializers
+from . import serializers, models
 from django.contrib.auth import update_session_auth_hash
+from .permissions import IsOwnerOrReadOnly
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -35,3 +36,21 @@ class ChangePasswordView(views.APIView):
             update_session_auth_hash(request, user)
             return Response({"detail": "Password updated successfully."})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TweetListCreateView(generics.ListCreateAPIView):
+    queryset = models.Tweet.objects.all()
+    serializer_class = serializers.TweetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+class TweetDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Tweet.objects.all()
+    serializer_class = serializers.TweetSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)

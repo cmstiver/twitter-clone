@@ -66,3 +66,12 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate_new_password(self, value):
         validate_password(value)
         return value
+
+
+class TweetSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = models.Tweet
+        fields = ('id', 'content', 'author', 'timestamp')
+        read_only_fields = ('id', 'timestamp')
