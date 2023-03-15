@@ -7,3 +7,4 @@ twitter-clone.code-workspace
 **/node_modules
 **/.env
 backend/media/profile_pictures
+backend/backend/firebase-credentials.json

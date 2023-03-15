@@ -163,7 +163,7 @@ class FollowListView(generics.ListCreateAPIView):
 
 
 class UserProfileDetailView(generics.RetrieveAPIView):
-    serializer_class = serializers.UserProfileSerializer
+    serializer_class = serializers.UserAndUserProfileSerializer
     queryset = models.UserProfile.objects.all()
 
     def get_object(self):

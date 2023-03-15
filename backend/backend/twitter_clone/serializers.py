@@ -11,6 +11,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserProfile
+        fields = ['bio', 'location',
+                  'birth_date', 'profile_picture']
+
+
+class UserAndUserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
     class Meta:
@@ -86,7 +93,7 @@ class TweetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Tweet
         fields = ['id', 'parent_tweet', 'content',
-                  'user_id', 'user', 'timestamp']
+                  'user_id', 'user', 'timestamp', 'image']
         read_only_fields = ['id', 'timestamp', 'parent_tweet']
 
 

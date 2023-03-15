@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from .firebase_storage import FirebaseStorage
 
 
 class UserProfile(models.Model):
@@ -9,7 +10,7 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=255, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(
-        upload_to='profile_pictures/', blank=True, null=True, default='default.png')
+        storage=FirebaseStorage, default='https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png?w=640')
 
     def __str__(self):
         return self.user.username
@@ -21,6 +22,7 @@ class Tweet(models.Model):
         'self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(storage=FirebaseStorage, null=True)
 
     def __str__(self):
         return self.content
