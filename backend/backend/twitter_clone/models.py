@@ -3,7 +3,8 @@ from django.db import models
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True)
     location = models.CharField(max_length=255, blank=True)
     birth_date = models.DateField(null=True, blank=True)

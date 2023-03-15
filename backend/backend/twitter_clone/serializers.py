@@ -11,16 +11,49 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password])
-    profile = UserProfileSerializer(required=False)
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+        extra_kwargs = {
+            'username': {'max_length': 15},
+            'email': {'required': False, 'allow_blank': True},
+            'password': {'write_only': True},
+        }
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password']
+        )
+        models.UserProfile.objects.create(user=user)
+        return user
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer(required=False, partial=True)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'profile')
+        fields = ('username', 'email', 'profile')
+        extra_kwargs = {
+            'username': {'max_length': 15},
+            'email': {'required': False, 'allow_blank': True}
+        }
 
-    def create(self, validated_data):
-        profile_data = validated_data.pop('profile', {})
-        user = User.objects.create_user(**validated_data)
-        models.UserProfile.objects.create(user=user, **profile_data)
-        return user
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('profile', None)
+        instance = super().update(instance, validated_data)
+
+        if profile_data:
+            profile_serializer = UserProfileSerializer(
+                instance.profile, data=profile_data, partial=True)
+
+            if profile_serializer.is_valid(raise_exception=True):
+                profile_serializer.save()
+
+        return instance
