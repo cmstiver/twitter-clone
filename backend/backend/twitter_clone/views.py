@@ -14,7 +14,6 @@ class UserRegistrationView(generics.CreateAPIView):
 
 
 class UserUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = User.objects.all()
     serializer_class = serializers.UserUpdateSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -81,7 +80,7 @@ class TweetReplyListView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         tweet_id = self.kwargs['tweet_id']
         parent_tweet = models.Tweet.objects.get(id=tweet_id)
-        serializer.save(author=self.request.user, parent_tweet=parent_tweet)
+        serializer.save(user=self.request.user, parent_tweet=parent_tweet)
 
 
 class TweetLikesListView(generics.ListCreateAPIView):
@@ -163,6 +162,32 @@ class UserProfileDetailView(generics.RetrieveAPIView):
         user_id = self.kwargs['user_id']
         queryset = queryset.filter(user=user_id)
         return queryset
+
+
+class CurrentUserProfileView(generics.RetrieveAPIView):
+    serializer_class = serializers.UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user.profile
+
+
+class CurrentUserLikeListView(generics.ListAPIView):
+    serializer_class = serializers.TweetLikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return models.Like.objects.filter(user=user)
+
+
+class CurrentUserRepliesListView(generics.ListAPIView):
+    serializer_class = serializers.TweetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return models.Tweet.objects.filter(user=user, parent_tweet__isnull=False)
 
 
 class NotificationListView(generics.ListAPIView):

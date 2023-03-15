@@ -74,11 +74,14 @@ class ChangePasswordSerializer(serializers.Serializer):
 class TweetSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(
         read_only=True, source='user.username')
+    user_id = serializers.PrimaryKeyRelatedField(
+        read_only=True)
 
     class Meta:
         model = models.Tweet
-        fields = ['id', 'content', 'user', 'timestamp']
-        read_only_fields = ['id', 'timestamp']
+        fields = ['id', 'parent_tweet', 'content',
+                  'user_id', 'user', 'timestamp']
+        read_only_fields = ['id', 'timestamp', 'parent_tweet']
 
 
 class TweetLikeSerializer(serializers.ModelSerializer):

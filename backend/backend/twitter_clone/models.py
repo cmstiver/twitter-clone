@@ -26,14 +26,16 @@ class Tweet(models.Model):
         return self.content
 
     def save(self, *args, **kwargs):
-        if self._state.adding and self.parent_tweet:
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+
+        if is_new and self.parent_tweet:
             Notification.objects.create(
                 recipient=self.parent_tweet.user,
                 sender=self.user,
                 tweet=self,
                 type='reply',
             )
-        super().save(*args, **kwargs)
 
 
 class Like(models.Model):
@@ -47,14 +49,16 @@ class Like(models.Model):
         return f"{self.user.username} likes {self.tweet.content}"
 
     def save(self, *args, **kwargs):
-        if self._state.adding:  # Check if this is a new Like being created
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+
+        if is_new:
             Notification.objects.create(
                 recipient=self.tweet.user,
                 sender=self.user,
                 tweet=self.tweet,
                 type='like',
             )
-        super().save(*args, **kwargs)
 
 
 class Retweet(models.Model):
@@ -68,14 +72,16 @@ class Retweet(models.Model):
         return f"{self.user.username} retweeted {self.tweet.content}"
 
     def save(self, *args, **kwargs):
-        if self._state.adding:  # Check if this is a new Retweet being created
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+
+        if is_new:
             Notification.objects.create(
                 recipient=self.tweet.user,
                 sender=self.user,
                 tweet=self.tweet,
                 type='retweet',
             )
-        super().save(*args, **kwargs)
 
 
 class Follow(models.Model):
