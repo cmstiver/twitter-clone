@@ -19,7 +19,9 @@ load_dotenv()
 env = os.environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+VITE_APP_DIR = os.path.join(BASE_DIR.parent.parent, 'frontend')
 
 
 # Quick-start development settings - unsuitable for production
@@ -64,7 +66,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'dist')],
+        'DIRS': [os.path.join(VITE_APP_DIR, 'dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,11 +136,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'assets/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'backend', 'media/')
-MEDIA_URL = '/media/'
+STATIC_URL = '/assets/'
+STATICFILES_DIRS = [os.path.join(VITE_APP_DIR, 'dist', 'assets')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

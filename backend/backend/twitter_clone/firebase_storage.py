@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 class FirebaseStorage(Storage):
     def __init__(self):
         self.client = storage.Client.from_service_account_json(
-            os.path.join(settings.BASE_DIR, 'backend', 'backend',
+            os.path.join(settings.BASE_DIR,
                          'firebase-credentials.json')
         )
         self.bucket = self.client.get_bucket('twitter-clone-6df96.appspot.com')
