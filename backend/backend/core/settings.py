@@ -132,7 +132,7 @@ USE_TZ = True
 STATIC_URL = 'assets/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'data/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'backend', 'media/')
 MEDIA_URL = '/media/'
 
 # Default primary key field type
