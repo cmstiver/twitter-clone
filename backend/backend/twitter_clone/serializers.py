@@ -7,6 +7,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['name', 'image', 'bio', 'location', 'website_url',]
+        extra_kwargs = {
+            'image': {'required': False},
+            'bio': {'required': False},
+            'location': {'required': False},
+            'website_url': {'required': False},
+        }
 
 
 class UserSerializer(serializers.ModelSerializer):

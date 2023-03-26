@@ -4,7 +4,6 @@ from . import serializers
 
 
 class UserCreate(generics.CreateAPIView):
-    queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
 
 
@@ -14,3 +13,9 @@ class UserUpdate(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserRetrieve(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+    lookup_field = 'id'

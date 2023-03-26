@@ -7,9 +7,9 @@ class Profile(models.Model):
     name = models.CharField(max_length=15)
     image = models.ImageField(upload_to='profile_images/',
                               default='https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png?w=640')
-    bio = models.TextField(max_length=160)
-    location = models.CharField(max_length=40)
-    website_url = models.URLField()
+    bio = models.TextField(max_length=160, default="")
+    location = models.CharField(max_length=40, default="")
+    website_url = models.URLField(default="")
     creation_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
