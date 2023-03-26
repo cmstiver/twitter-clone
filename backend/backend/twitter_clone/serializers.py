@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile
+from . import models
 from django.contrib.auth.password_validation import validate_password
 import re
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
+        model = models.Profile
         fields = ['name', 'image', 'bio',
                   'location', 'website_url', 'created_at']
         extra_kwargs = {
@@ -24,8 +24,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'profile']
+        fields = ['id', 'username', 'email', 'password', 'profile']
         extra_kwargs = {
+            'id': {'read_only': True},
             'password': {'write_only': True},
             'email': {'required': False},
         }
@@ -49,7 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create(**validated_data)
         user.set_password(password)
         user.save()
-        Profile.objects.create(user=user, **profile_data)
+        models.Profile.objects.create(user=user, **profile_data)
         return user
 
     def update(self, instance, validated_data):
@@ -69,3 +70,22 @@ class UserSerializer(serializers.ModelSerializer):
         profile.save()
 
         return instance
+
+
+class TweetSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = models.Tweet
+        fields = ['id', 'user', 'content', 'image', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+
+class TweetDetailSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = models.Tweet
+        fields = ['id', 'user', 'parent_tweet',
+                  'content', 'image', 'created_at', 'replies']
+        read_only_fields = ['id', 'created_at']
