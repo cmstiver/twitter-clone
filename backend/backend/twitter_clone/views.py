@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from . import serializers, models
 from django.shortcuts import get_object_or_404
 from .permissions import IsOwnerOrReadOnly
+from django.db.models import Q
 
 
 class UserCreate(generics.CreateAPIView):
@@ -24,7 +25,7 @@ class UserRetrieve(generics.RetrieveAPIView):
 
 
 class TweetListCreate(generics.ListCreateAPIView):
-    queryset = models.Tweet.objects.all()
+    queryset = models.Tweet.objects.filter(Q(parent_tweet__isnull=True))
     serializer_class = serializers.TweetSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
