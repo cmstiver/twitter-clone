@@ -1,7 +1,8 @@
 **/__pycache__
 **/.venv
-twitter-clone.code-workspace
 **/migrations
+backend/backend/media
+backend/backend/static
 **/.env
 
 # Logs
