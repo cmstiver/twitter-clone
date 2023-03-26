@@ -1,17 +1,21 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Profile
+from django.contrib.auth.password_validation import validate_password
+import re
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['name', 'image', 'bio', 'location', 'website_url',]
+        fields = ['name', 'image', 'bio',
+                  'location', 'website_url', 'created_at']
         extra_kwargs = {
             'image': {'required': False},
             'bio': {'required': False},
             'location': {'required': False},
             'website_url': {'required': False},
+            'created_at': {'read_only': True},
         }
 
 
@@ -25,6 +29,19 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
             'email': {'required': False},
         }
+
+    def validate_username(self, value):
+        if not re.match(r'^[\w-]+$', value):
+            raise serializers.ValidationError(
+                'Username can only contain alphanumeric characters, underscores, and dashes.')
+        if len(value) < 5:
+            raise serializers.ValidationError(
+                'Username must be at least 5 characters long.')
+        return value
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile')
