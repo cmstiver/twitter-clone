@@ -88,4 +88,4 @@ class TweetDetailSerializer(serializers.ModelSerializer):
         model = models.Tweet
         fields = ['id', 'user', 'parent_tweet',
                   'content', 'image', 'created_at', 'replies']
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'replies']
