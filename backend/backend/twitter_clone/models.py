@@ -30,3 +30,38 @@ class Tweet(models.Model):
 
     def __str__(self):
         return f'{self.user.username}: {self.content}'
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'tweet')
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.tweet.content}"
+
+
+class Retweet(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'tweet')
+
+    def __str__(self):
+        return f"{self.user.username} retweeted {self.tweet.content}"
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='following')
+    followed = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='followers')
+
+    class Meta:
+        unique_together = ('follower', 'followed')
+
+    def __str__(self):
+        return f"{self.follower.username} follows {self.followed.username}"
