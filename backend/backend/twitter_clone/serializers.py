@@ -6,10 +6,15 @@ import re
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    following_count = serializers.IntegerField(
+        source='user.following.count', read_only=True)
+    followers_count = serializers.IntegerField(
+        source='user.followers.count', read_only=True)
+
     class Meta:
         model = models.Profile
         fields = ['name', 'image', 'bio',
-                  'location', 'website_url', 'created_at']
+                  'location', 'website_url', 'following_count', 'followers_count', 'created_at']
         extra_kwargs = {
             'image': {'required': False},
             'bio': {'required': False},

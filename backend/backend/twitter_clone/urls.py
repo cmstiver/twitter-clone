@@ -17,6 +17,8 @@ urlpatterns = [
          views.LikeToggle.as_view(), name='like-toggle'),
     path('tweets/<int:tweet_id>/retweet/',
          views.RetweetToggle.as_view(), name='retweet-toggle'),
+    path('profiles/<int:user_id>/follow/',
+         views.FollowToggle.as_view(), name='follow-toggle'),
 
 ]
 

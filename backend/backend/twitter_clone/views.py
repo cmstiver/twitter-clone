@@ -81,3 +81,23 @@ class RetweetToggle(generics.GenericAPIView):
         except models.Retweet.DoesNotExist:
             models.Retweet.objects.create(user=user, tweet=tweet)
             return Response(status=status.HTTP_201_CREATED)
+
+
+class FollowToggle(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        user_to_follow = get_object_or_404(User, id=user_id)
+
+        if user_to_follow == request.user:
+            return Response({'error': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            follow = models.Follow.objects.get(
+                follower=request.user, followed=user_to_follow)
+            follow.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except models.Follow.DoesNotExist:
+            models.Follow.objects.create(
+                follower=request.user, followed=user_to_follow)
+            return Response(status=status.HTTP_201_CREATED)
