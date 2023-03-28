@@ -11,11 +11,12 @@ urlpatterns = [
     path('tweets/', views.TweetListCreate.as_view(), name='tweet-list-create'),
     path('tweets/<int:tweet_id>/', views.TweetDetail.as_view(),
          name='tweet-detail'),
-    path('tweets/<int:parent_tweet_id>/reply',
+    path('tweets/<int:parent_tweet_id>/reply/',
          views.TweetListCreate.as_view(), name='tweet-create-child'),
-
-
-
+    path('tweets/<int:tweet_id>/like/',
+         views.LikeToggle.as_view(), name='like-toggle'),
+    path('tweets/<int:tweet_id>/retweet/',
+         views.RetweetToggle.as_view(), name='retweet-toggle'),
 
 ]
 

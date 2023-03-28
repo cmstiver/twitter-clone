@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Count
 
 
 class Profile(models.Model):
@@ -25,6 +26,10 @@ class Tweet(models.Model):
     image = models.ImageField(upload_to='tweet_images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def replies_ordered_by_likes(self):
+        return self.replies.annotate(like_count=Count('likes')).order_by('-like_count')
+
     class Meta:
         ordering = ['-created_at']
 
@@ -34,7 +39,8 @@ class Tweet(models.Model):
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+    tweet = models.ForeignKey(
+        Tweet, on_delete=models.CASCADE, related_name='likes')
 
     class Meta:
         unique_together = ('user', 'tweet')
@@ -45,7 +51,8 @@ class Like(models.Model):
 
 class Retweet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
+    tweet = models.ForeignKey(
+        Tweet, on_delete=models.CASCADE, related_name='retweets')
 
     class Meta:
         unique_together = ('user', 'tweet')

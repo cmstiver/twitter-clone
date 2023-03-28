@@ -72,20 +72,51 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class TweetSerializer(serializers.ModelSerializer):
+class LikeSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
     class Meta:
+        model = models.Like
+        fields = ['user']
+
+
+class RetweetSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = models.Retweet
+        fields = ['user']
+
+
+class TweetSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    like_count = serializers.IntegerField(source='likes.count', read_only=True)
+    retweet_count = serializers.IntegerField(
+        source='retweets.count', read_only=True)
+    reply_count = serializers.IntegerField(
+        source='replies.count', read_only=True)
+
+    class Meta:
         model = models.Tweet
-        fields = ['id', 'user', 'content', 'image', 'created_at']
+        fields = ['id', 'user', 'content', 'image', 'created_at', 'reply_count',
+                  'retweet_count', 'like_count']
         read_only_fields = ['id', 'created_at']
 
 
 class TweetDetailSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    replies = TweetSerializer(
+        source='replies_ordered_by_likes', many=True, read_only=True)
+    likes = LikeSerializer(many=True, read_only=True)
+    retweets = RetweetSerializer(many=True, read_only=True)
+    like_count = serializers.IntegerField(source='likes.count', read_only=True)
+    retweet_count = serializers.IntegerField(
+        source='retweets.count', read_only=True)
+    reply_count = serializers.IntegerField(
+        source='replies.count', read_only=True)
 
     class Meta:
         model = models.Tweet
         fields = ['id', 'user', 'parent_tweet',
-                  'content', 'image', 'created_at', 'replies']
-        read_only_fields = ['id', 'created_at', 'replies']
+                  'content', 'image', 'created_at', 'reply_count',  'retweet_count', 'like_count',  'replies', 'retweets', 'likes']
+        read_only_fields = ['id', 'created_at']
