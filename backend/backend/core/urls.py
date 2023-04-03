@@ -6,8 +6,8 @@ from django.conf import settings
 
 urlpatterns = [
     path("", front, name="front"),
-    path('admin/', admin.site.urls),
-    path('api/', include('twitter_clone.urls'))
+    path('admin', admin.site.urls),
+    path('api', include('twitter_clone.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
