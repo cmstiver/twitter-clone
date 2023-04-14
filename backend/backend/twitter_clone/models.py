@@ -8,9 +8,9 @@ class Profile(models.Model):
     name = models.CharField(max_length=15)
     image = models.ImageField(upload_to='profile_images/',
                               default='default.webp')
-    bio = models.TextField(max_length=160, default="")
+    bio = models.CharField(max_length=160, default="")
     location = models.CharField(max_length=40, default="")
-    website_url = models.URLField(default="")
+    website_url = models.URLField(max_length=75, default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
