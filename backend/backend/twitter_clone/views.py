@@ -20,11 +20,11 @@ class UserUpdate(generics.RetrieveUpdateAPIView):
 
 class UserRetrieve(generics.RetrieveAPIView):
     serializer_class = serializers.UserSerializer
-    lookup_field = 'id'
+    lookup_field = 'username'
 
     def get_queryset(self):
-        user_id = self.kwargs['id']
-        return User.objects.filter(id=user_id)
+        username = self.kwargs['username']
+        return User.objects.filter(username=username)
 
 
 class TweetListCreate(generics.ListCreateAPIView):
