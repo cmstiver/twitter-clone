@@ -126,8 +126,8 @@ class RetweetToggle(generics.GenericAPIView):
 class FollowToggle(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, user_id):
-        user_to_follow = get_object_or_404(User, id=user_id)
+    def post(self, request, username):
+        user_to_follow = get_object_or_404(User, username=username)
 
         if user_to_follow == request.user:
             return Response({'error': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -141,3 +141,25 @@ class FollowToggle(generics.GenericAPIView):
             models.Follow.objects.create(
                 follower=request.user, followed=user_to_follow)
             return Response(status=status.HTTP_201_CREATED)
+
+
+class FollowingList(generics.ListAPIView):
+    serializer_class = serializers.UserSerializer
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        user = get_object_or_404(User, username=username)
+        follows = models.Follow.objects.filter(follower=user)
+        followed_users = [follow.followed for follow in follows]
+        return followed_users
+
+
+class FollowerList(generics.ListAPIView):
+    serializer_class = serializers.UserSerializer
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        user = get_object_or_404(User, username=username)
+        follows = models.Follow.objects.filter(followed=user)
+        followers = [follow.follower for follow in follows]
+        return followers
