@@ -4,10 +4,40 @@ from . import serializers, models
 from django.shortcuts import get_object_or_404
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
+import requests
+from rest_framework.authtoken.models import Token
+from django.db.models import Q
 
 
 class UserCreate(generics.CreateAPIView):
     serializer_class = serializers.UserSerializer
+
+
+class UserCreateRandom(generics.CreateAPIView):
+    serializer_class = serializers.UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        # Fetch JSON data from provided URL
+        url = "https://api.mockaroo.com/api/0915f590?count=1&key=abc3baa0"
+        response = requests.get(url)
+        json_data = response.json()[0]
+
+        # Validate and save new user
+        serializer = self.get_serializer(data=json_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        # Generate auth token for new user
+        user = serializer.instance
+        token, created = Token.objects.get_or_create(user=user)
+
+        # Create response data with auth token
+        response_data = serializer.data
+        response_data['auth_token'] = token.key
+
+        # Return response
+        headers = self.get_success_headers(serializer.data)
+        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class UserUpdate(generics.RetrieveUpdateAPIView):
@@ -39,6 +69,16 @@ class TweetListCreate(generics.ListCreateAPIView):
             serializer.save(user=self.request.user, parent_tweet=parent_tweet)
         else:
             serializer.save(user=self.request.user)
+
+
+class FollowingTweetList(generics.ListAPIView):
+    serializer_class = serializers.TweetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        followed_users = models.Follow.objects.filter(
+            follower=self.request.user).values_list('followed', flat=True)
+        return models.Tweet.objects.filter(user__in=followed_users)
 
 
 class TweetDetail(generics.RetrieveDestroyAPIView):
