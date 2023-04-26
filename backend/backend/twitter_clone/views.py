@@ -78,7 +78,12 @@ class FollowingTweetList(generics.ListAPIView):
     def get_queryset(self):
         followed_users = models.Follow.objects.filter(
             follower=self.request.user).values_list('followed', flat=True)
-        return models.Tweet.objects.filter(user__in=followed_users)
+        user_tweets = models.Tweet.objects.filter(user__in=followed_users)
+        retweeted_tweet_ids = models.Retweet.objects.filter(
+            user__in=followed_users).values_list('tweet_id', flat=True)
+        retweeted_tweets = models.Tweet.objects.filter(
+            id__in=retweeted_tweet_ids)
+        return (user_tweets | retweeted_tweets).distinct().order_by('-created_at')
 
 
 class TweetDetail(generics.RetrieveDestroyAPIView):
@@ -163,3 +168,24 @@ class FollowerList(generics.ListAPIView):
         follows = models.Follow.objects.filter(followed=user)
         followers = [follow.follower for follow in follows]
         return followers
+
+
+class UserTweetsList(generics.ListAPIView):
+    serializer_class = serializers.TweetSerializer
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        user_tweets = models.Tweet.objects.filter(user__username=username)
+        retweeted_tweet_ids = models.Retweet.objects.filter(
+            user__username=username).values_list('tweet_id', flat=True)
+        return (user_tweets | models.Tweet.objects.filter(id__in=retweeted_tweet_ids)).distinct().order_by('-created_at')
+
+
+class UserLikesList(generics.ListAPIView):
+    serializer_class = serializers.TweetSerializer
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        liked_tweet_ids = models.Like.objects.filter(
+            user__username=username).values_list('tweet_id', flat=True)
+        return models.Tweet.objects.filter(id__in=liked_tweet_ids)

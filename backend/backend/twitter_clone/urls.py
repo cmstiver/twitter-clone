@@ -28,7 +28,10 @@ urlpatterns = [
          views.FollowingList.as_view(), name='user-following'),
     path('profiles/<str:username>/followers',
          views.FollowerList.as_view(), name='user-followers'),
-
+    path('profiles/<str:username>/tweets',
+         views.UserTweetsList.as_view(), name='user-tweets'),
+    path('profiles/<str:username>/likes',
+         views.UserLikesList.as_view(), name='user-likes'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
