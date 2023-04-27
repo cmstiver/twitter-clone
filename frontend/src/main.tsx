@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom/client";
+import * as ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -34,4 +34,4 @@ const router = createBrowserRouter([
 
 const rootElement = document.getElementById("root") as Element;
 
-ReactDOM.createRoot(rootElement).render(<RouterProvider router={router} />);
+ReactDOM.render(<RouterProvider router={router} />, rootElement);
