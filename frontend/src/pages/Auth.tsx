@@ -47,19 +47,39 @@ const LoginForm = () => {
 
 const SignupForm = () => {
   const [username, setUsername] = useState("");
+  const [handle, setHandle] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      console.log("Passwords do not match.");
+      return;
+    }
+
     try {
-      const response = await axios.post("/signup", {
+      const response = await axios.post("/api/register", {
         username,
         password,
-        confirmPassword,
+        profile: { name: handle },
       });
-      console.log(response.data);
     } catch (error) {
       console.error(error);
+      return;
+    }
+
+    try {
+      const response = await axios.post("/api/obtain-auth", {
+        username,
+        password,
+      });
+      const token = response.data.token;
+      localStorage.setItem("authToken", token);
+      navigate("home");
+    } catch (error) {
+      console.error(error);
+      return;
     }
   };
 
@@ -72,6 +92,14 @@ const SignupForm = () => {
           type="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+        />
+      </label>
+      <label>
+        Handle:
+        <input
+          type="handle"
+          value={handle}
+          onChange={(e) => setHandle(e.target.value)}
         />
       </label>
       <label>
