@@ -84,6 +84,10 @@ const Tweet: React.FC<TweetProps> = ({ tweetData }) => {
       className="grid grid-cols-[auto_1fr] gap-2 border-b-2 p-2 text-white hover:cursor-pointer hover:bg-[#2c2c39]"
     >
       <img
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate(`/profiles/${tweetData.user.username}`);
+        }}
         src={tweetData.user.profile.image}
         className="h-12 w-12 rounded-full"
       ></img>
@@ -96,7 +100,7 @@ const Tweet: React.FC<TweetProps> = ({ tweetData }) => {
         </span>
         <div>{tweetData.content}</div>
         <div className="flex">
-          <button className="flex rounded-md py-2 align-middle hover:bg-[#4d7eac]">
+          <button className="flex rounded-md py-2 px-1 align-middle hover:bg-[#4d7eac]">
             <span className="material-symbols-outlined not-filled">
               comment
             </span>
@@ -107,7 +111,7 @@ const Tweet: React.FC<TweetProps> = ({ tweetData }) => {
               e.stopPropagation();
               createLike();
             }}
-            className="ml-4 flex rounded-md py-2 align-middle hover:bg-[#824343]"
+            className="ml-4 flex rounded-md py-2 px-1 align-middle hover:bg-[#824343]"
           >
             <span
               className={`material-symbols-outlined  ${

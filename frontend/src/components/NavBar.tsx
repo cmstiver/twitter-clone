@@ -1,7 +1,11 @@
+import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { user } from "../App";
 
 export default function NavBar() {
   const navigate = useNavigate();
+
+  const { userInfo, setUserInfo } = useContext(user);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -20,10 +24,12 @@ export default function NavBar() {
           </Link>
         </li>
         <li>
-          <button className="flex items-center rounded-md p-2 text-white hover:bg-[#21212e]">
-            <span className="material-symbols-outlined text-4xl">person</span>
-            <span className="hidden text-xl lg:block">Profile</span>
-          </button>
+          <Link to={`/profiles/${userInfo.username}`}>
+            <button className="flex items-center rounded-md p-2 text-white hover:bg-[#21212e]">
+              <span className="material-symbols-outlined text-4xl">person</span>
+              <span className="hidden text-xl lg:block">Profile</span>
+            </button>
+          </Link>
         </li>
         <li>
           <button

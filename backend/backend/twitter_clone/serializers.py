@@ -103,7 +103,7 @@ class TweetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Tweet
-        fields = ['id', 'user', 'content', 'image', 'created_at', 'reply_count',
+        fields = ['id', 'parent_tweet', 'user', 'content', 'image', 'created_at', 'reply_count',
                   'retweet_count', 'like_count']
         read_only_fields = ['id', 'created_at']
 
@@ -122,6 +122,6 @@ class TweetDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Tweet
-        fields = ['id', 'user', 'parent_tweet',
+        fields = ['id', 'parent_tweet', 'user', 'parent_tweet',
                   'content', 'image', 'created_at', 'reply_count',  'retweet_count', 'like_count',  'replies', 'retweets', 'likes']
         read_only_fields = ['id', 'created_at']

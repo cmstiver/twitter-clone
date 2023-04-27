@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { formatDate } from "../utilities";
 import { likes, user, userAuth } from "../App";
 import Tweet from "../components/Tweet";
@@ -61,6 +61,8 @@ function TweetFormMini({ id }: TweetFormMiniProps) {
 
   const [content, setContent] = useState("");
 
+  const navigate = useNavigate();
+
   function postTweet() {
     axios
       .post(
@@ -87,8 +89,11 @@ function TweetFormMini({ id }: TweetFormMiniProps) {
     <div className="relative border-b-2 pb-12">
       <div className="grid grid-cols-[auto_1fr] gap-2 p-2 text-white">
         <img
+          onClick={(e) => {
+            navigate(`/profiles/${userInfo.username}`);
+          }}
           src={userInfo.profile.image}
-          className="h-12 w-12 rounded-full"
+          className="h-12 w-12 rounded-full hover:cursor-pointer"
         ></img>
         <textarea
           className="block w-full resize-none bg-inherit outline-none"
@@ -113,6 +118,8 @@ export default function TweetDetail() {
 
   const id = useParams().id as string;
 
+  const navigate = useNavigate();
+
   function fetchTweetData() {
     axios
       .get(`/api/tweets/${id}`)
@@ -120,7 +127,7 @@ export default function TweetDetail() {
         setTweetData(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }
 
@@ -134,8 +141,11 @@ export default function TweetDetail() {
         <>
           <div className="grid grid-cols-[auto_1fr] gap-2 border-b-2 p-2 text-white ">
             <img
+              onClick={(e) => {
+                navigate(`/profiles/${tweetData.user.username}`);
+              }}
               src={tweetData.user.profile.image}
-              className="h-12 w-12 rounded-full"
+              className="h-12 w-12 rounded-full hover:cursor-pointer"
             ></img>
             <div>
               <span className="font-bold">{tweetData.user.profile.name}</span>

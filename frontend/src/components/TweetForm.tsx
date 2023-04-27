@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { user, userAuth } from "../App";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function TweetForm() {
   const { userInfo, setUserInfo } = useContext(user);
   const { authToken, setAuthToken } = useContext(userAuth);
+  const navigate = useNavigate();
 
   const [content, setContent] = useState("");
 
@@ -34,8 +36,12 @@ export default function TweetForm() {
     <div className="relative border-b-2 pb-12">
       <div className="grid grid-cols-[auto_1fr] gap-2 p-2 text-white">
         <img
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/profiles/${userInfo.username}`);
+          }}
           src={userInfo.profile.image}
-          className="h-12 w-12 rounded-full"
+          className="h-12 w-12 rounded-full hover:cursor-pointer"
         ></img>
         <textarea
           className="block w-full resize-none bg-inherit outline-none"

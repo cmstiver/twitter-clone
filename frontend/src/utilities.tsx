@@ -1,5 +1,4 @@
 export function getRelativeTime(timestamp: string): string {
-  console.log(timestamp);
   const now = new Date();
   const created = new Date(timestamp);
 
