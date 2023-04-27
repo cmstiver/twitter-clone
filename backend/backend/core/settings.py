@@ -14,7 +14,8 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
-
+import django_on_heroku
+django_on_heroku.settings(locals())
 
 load_dotenv()
 
@@ -90,18 +91,15 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': env['dbname'],
-    #     'USER': env['dbuser'],
-    #     'PASSWORD': env['dbpassword'],
-    #     'HOST': env['dbhost'],
-    #     'PORT': env['dbport'],
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '<DATABASE>',
+        'USER': '<USER>',
+        'PASSWORD': '<PASSWORD>',
+        'HOST': '<HOST>',
+        'PORT': '5432',
+    }
 }
-
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
