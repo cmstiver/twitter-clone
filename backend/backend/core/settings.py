@@ -22,7 +22,7 @@ load_dotenv()
 env = os.environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__name__).resolve().parent.parent
 
 VITE_APP_DIR = os.path.join(BASE_DIR.parent.parent, 'frontend')
 
