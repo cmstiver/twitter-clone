@@ -10,6 +10,14 @@ export const userAuth = createContext({
   >,
 });
 
+export const likes = createContext<{
+  likedTweets: any[];
+  setLikedTweets: React.Dispatch<React.SetStateAction<any[]>>;
+}>({
+  likedTweets: [],
+  setLikedTweets: () => {},
+});
+
 interface UserInfo {
   id: number;
   username: string;
@@ -65,6 +73,7 @@ function App() {
       created_at: "",
     },
   });
+  const [likedTweets, setLikedTweets] = useState<any[]>([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -82,6 +91,24 @@ function App() {
     }
   };
 
+  function fetchLikedTweets() {
+    axios
+      .get(`/api/profiles/${userInfo.username}/likes`)
+      .then((response) => {
+        setLikedTweets(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [authToken]);
+  useEffect(() => {
+    fetchLikedTweets();
+  }, [userInfo]);
+
   useEffect(() => {
     const authTokenFromStorage = localStorage.getItem("authToken");
     if (authTokenFromStorage) {
@@ -93,22 +120,20 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, [authToken]);
-
   return (
-    <user.Provider value={{ userInfo, setUserInfo }}>
-      <userAuth.Provider value={{ authToken, setAuthToken }}>
-        <div className="flex justify-center">
-          <NavBar />
-          <div className="h-screen w-[600px] lg:border-x-2">
-            <Outlet />
+    <likes.Provider value={{ likedTweets, setLikedTweets }}>
+      <user.Provider value={{ userInfo, setUserInfo }}>
+        <userAuth.Provider value={{ authToken, setAuthToken }}>
+          <div className="flex justify-center">
+            <NavBar />
+            <div className="min-h-full w-[600px] lg:border-x-2">
+              <Outlet />
+            </div>
+            <div className="hidden w-[200px] lg:flex"></div>
           </div>
-          <div className="hidden w-[200px] lg:flex"></div>
-        </div>
-      </userAuth.Provider>
-    </user.Provider>
+        </userAuth.Provider>
+      </user.Provider>
+    </likes.Provider>
   );
 }
 

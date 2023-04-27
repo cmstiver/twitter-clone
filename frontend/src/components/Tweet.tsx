@@ -1,65 +1,88 @@
-interface TweetData {
-  tweetData: {
+import { useContext, useEffect, useState } from "react";
+import { likes, user, userAuth } from "../App";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { getRelativeTime } from "../utilities";
+
+interface Tweet {
+  id: number;
+  user: {
     id: number;
-    user: {
-      id: number;
-      username: string;
-      email: string;
-      profile: {
-        name: string;
-        image: string;
-        bio: string;
-        location: string;
-        website_url: string;
-        following_count: number;
-        followers_count: number;
-        created_at: string;
-      };
+    username: string;
+    email: string;
+    profile: {
+      name: string;
+      image: string;
+      bio: string;
+      location: string;
+      website_url: string;
+      following_count: number;
+      followers_count: number;
+      created_at: string;
     };
-    content: string;
-    image: string | null;
-    created_at: string;
-    reply_count: number;
-    retweet_count: number;
-    like_count: number;
   };
+  content: string;
+  image: string | null;
+  created_at: string;
+  reply_count: number;
+  retweet_count: number;
+  like_count: number;
 }
 
-const Tweet: React.FC<TweetData> = ({ tweetData }) => {
-  console.log(tweetData);
+interface TweetProps {
+  tweetData: Tweet;
+}
 
-  function getRelativeTime(timestamp: string): string {
-    const now = new Date();
-    const created = new Date(timestamp);
+const Tweet: React.FC<TweetProps> = ({ tweetData }) => {
+  const { authToken, setAuthToken } = useContext(userAuth);
+  const { likedTweets, setLikedTweets } = useContext(likes);
 
-    const elapsedMs = now.getTime() - created.getTime();
+  const navigate = useNavigate();
 
-    const MINUTE_MS = 60 * 1000;
-    const HOUR_MS = 60 * MINUTE_MS;
-    const DAY_MS = 24 * HOUR_MS;
+  const [isLiked, setIsLiked] = useState(false);
 
-    if (elapsedMs < MINUTE_MS) {
-      return "Just now";
-    } else if (elapsedMs < HOUR_MS) {
-      const minutes = Math.floor(elapsedMs / MINUTE_MS);
-      return `${minutes}m`;
-    } else if (elapsedMs < DAY_MS) {
-      const hours = Math.floor(elapsedMs / HOUR_MS);
-      return `${hours}h`;
-    } else {
-      const month = created.toLocaleString("default", { month: "long" });
-      const day = created.getDate();
-      const year = created.getFullYear();
-      if (year === now.getFullYear()) {
-        return `${month} ${day}`;
+  function createLike() {
+    try {
+      axios.post(
+        `/api/tweets/${tweetData.id}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      if (isLiked === false) {
+        tweetData.like_count += 1;
+        setIsLiked(true);
       } else {
-        return `${month} ${day}, ${year}`;
+        tweetData.like_count -= 1;
+        setIsLiked(false);
       }
     }
   }
 
+  useEffect(() => {
+    if (Array.isArray(likedTweets)) {
+      likedTweets.forEach((likedTweet) => {
+        if (likedTweet.id == tweetData.id) {
+          setIsLiked(true);
+        }
+      });
+    }
+  }, [likedTweets]);
+
   return (
-    <div className="grid grid-cols-[auto_1fr] gap-2 border-b-2 p-2 text-white">
+    <div
+      onClick={() => {
+        navigate(`/tweets/${tweetData.id}`);
+        window.location.reload();
+      }}
+      className="grid grid-cols-[auto_1fr] gap-2 border-b-2 p-2 text-white hover:cursor-pointer hover:bg-[#2c2c39]"
+    >
       <img
         src={tweetData.user.profile.image}
         className="h-12 w-12 rounded-full"
@@ -72,6 +95,30 @@ const Tweet: React.FC<TweetData> = ({ tweetData }) => {
           • {getRelativeTime(tweetData.created_at)}
         </span>
         <div>{tweetData.content}</div>
+        <div className="flex">
+          <button className="flex rounded-md py-2 align-middle hover:bg-[#4d7eac]">
+            <span className="material-symbols-outlined not-filled">
+              comment
+            </span>
+            <span className="ml-1">{tweetData.reply_count}</span>
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              createLike();
+            }}
+            className="ml-4 flex rounded-md py-2 align-middle hover:bg-[#824343]"
+          >
+            <span
+              className={`material-symbols-outlined  ${
+                isLiked ? "text-red-600" : "not-filled"
+              }`}
+            >
+              favorite
+            </span>
+            <span className="ml-1">{tweetData.like_count}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

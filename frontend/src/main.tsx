@@ -4,6 +4,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Auth from "./pages/Auth";
+import TweetDetail from "./pages/TweetDetail";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <HomePage />,
+      },
+      {
+        path: "tweets/:id",
+        element: <TweetDetail />,
       },
     ],
   },

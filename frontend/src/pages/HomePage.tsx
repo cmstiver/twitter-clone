@@ -2,10 +2,11 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Tweet from "../components/Tweet";
 import TweetForm from "../components/TweetForm";
-import { userAuth } from "../App";
+import { user, userAuth } from "../App";
 
 export default function HomePage() {
   const { authToken, setAuthToken } = useContext(userAuth);
+  const { userInfo, setUserInfo } = useContext(user);
 
   const [currentTab, setCurrentTab] = useState("All Posts");
 
@@ -41,7 +42,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchAllTweets();
-  }, []);
+  }, [userInfo]);
 
   return (
     <>
