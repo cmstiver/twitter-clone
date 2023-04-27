@@ -41,6 +41,7 @@ ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,7 +52,6 @@ INSTALLED_APPS = [
     'frontend_app',
     'rest_framework',
     'rest_framework.authtoken',
-    'whitenoise.runserver_nostatic'
 ]
 
 MIDDLEWARE = [
@@ -156,4 +156,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-django_on_heroku.settings(locals())
+django_on_heroku.settings(locals(), staticfiles=False)
