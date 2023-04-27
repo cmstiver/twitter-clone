@@ -35,7 +35,7 @@ VITE_APP_DIR = os.path.join(BASE_DIR, '..', '..', 'frontend')
 SECRET_KEY = env['django']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'verse-twitter-clone.herokuapp.com']
 
@@ -92,16 +92,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': 'twitter_db',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'twitter_db',
         # 'USER': '<USER>',
         # 'PASSWORD': '<PASSWORD>',
         # 'HOST': '<HOST>',
         # 'PORT': '5432',
     }
 }
-DATABASES['default'] = dj_database_url.config(
-    conn_max_age=600, ssl_require=True)
+# DATABASES['default'] = dj_database_url.config(
+#     conn_max_age=600, ssl_require=True)
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
