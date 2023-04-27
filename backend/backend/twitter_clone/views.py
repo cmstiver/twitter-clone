@@ -21,6 +21,7 @@ class UserCreateRandom(generics.CreateAPIView):
         url = "https://api.mockaroo.com/api/0915f590?count=1&key=abc3baa0"
         response = requests.get(url)
         json_data = response.json()[0]
+        print(json_data)
 
         # Validate and save new user
         serializer = self.get_serializer(data=json_data)

@@ -79,6 +79,9 @@ function App() {
   const location = useLocation();
 
   const fetchData = async () => {
+    if (!authToken) {
+      return;
+    }
     try {
       const response = await axios.get("/api/my-profile", {
         headers: {
