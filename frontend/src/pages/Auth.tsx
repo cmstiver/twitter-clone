@@ -16,31 +16,34 @@ const LoginForm = () => {
       const token = response.data.token;
       localStorage.setItem("authToken", token);
       navigate("home");
+      location.reload();
     } catch (error) {
-      console.error(error);
+      alert(error);
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <label>
-        Username:
-        <input
-          type="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </label>
-      <label>
-        Password:
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </label>
-      <button onClick={handleLogin}>Login</button>
+    <div className="flex flex-col items-center text-white">
+      <h2 className="my-10 text-3xl">Login</h2>
+      <input
+        id="username"
+        className="h-12 w-full border-b-2 bg-inherit"
+        type="username"
+        value={username}
+        placeholder="Username..."
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        id="password"
+        className="h-12 w-full border-b-2 bg-inherit"
+        type="password"
+        value={password}
+        placeholder="Password..."
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button className="material-symbols-outlined m-10" onClick={handleLogin}>
+        login
+      </button>
     </div>
   );
 };
@@ -65,7 +68,7 @@ const SignupForm = () => {
         profile: { name: handle },
       });
     } catch (error) {
-      console.error(error);
+      alert(error);
       return;
     }
 
@@ -77,55 +80,79 @@ const SignupForm = () => {
       const token = response.data.token;
       localStorage.setItem("authToken", token);
       navigate("home");
+      location.reload();
     } catch (error) {
-      console.error(error);
+      alert(error);
       return;
     }
   };
 
   return (
-    <div>
-      <h2>Signup</h2>
-      <label>
-        Username:
-        <input
-          type="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </label>
-      <label>
-        Handle:
-        <input
-          type="handle"
-          value={handle}
-          onChange={(e) => setHandle(e.target.value)}
-        />
-      </label>
-      <label>
-        Password:
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </label>
-      <label>
-        Confirm Password:
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-      </label>
-      <button onClick={handleSignup}>Sign Up</button>
+    <div className="flex flex-col items-center text-white">
+      <h2 className="my-10 text-3xl">Signup</h2>
+      <input
+        className="h-12 w-full border-b-2 bg-inherit"
+        type="username"
+        value={username}
+        placeholder="Username (Unique)..."
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        className="h-12 w-full border-b-2 bg-inherit"
+        type="handle"
+        value={handle}
+        placeholder="Handle (Non-Unique)..."
+        onChange={(e) => setHandle(e.target.value)}
+      />
+
+      <input
+        className="h-12 w-full border-b-2 bg-inherit"
+        type="password"
+        value={password}
+        placeholder="Password..."
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      <input
+        className="h-12 w-full border-b-2 bg-inherit"
+        type="password"
+        value={confirmPassword}
+        placeholder="Confirm Password..."
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+
+      <button className="material-symbols-outlined m-10" onClick={handleSignup}>
+        login
+      </button>
     </div>
   );
 };
 
 const Auth = () => {
+  const navigate = useNavigate();
+
+  const createRandomUser = async () => {
+    try {
+      const response = await axios.post("/api/register_random");
+      console.log(response.data);
+      const token = response.data.auth_token;
+      localStorage.setItem("authToken", token);
+      navigate("home");
+      location.reload();
+    } catch (error) {
+      alert(error);
+      return;
+    }
+  };
+
   return (
-    <div>
+    <div className="flex flex-col items-center">
+      <button
+        onClick={createRandomUser}
+        className="mt-20 w-[200px] rounded-lg bg-blue-400 font-bold"
+      >
+        Create Random User
+      </button>
       <LoginForm />
       <SignupForm />
     </div>

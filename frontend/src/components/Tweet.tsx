@@ -87,6 +87,7 @@ const Tweet: React.FC<TweetProps> = ({ tweetData }) => {
         onClick={(e) => {
           e.stopPropagation();
           navigate(`/profiles/${tweetData.user.username}`);
+          window.location.reload();
         }}
         src={tweetData.user.profile.image}
         className="h-12 w-12 rounded-full"

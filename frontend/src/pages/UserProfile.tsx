@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { userAuth } from "../App";
+import { user, userAuth } from "../App";
 import { useParams } from "react-router-dom";
 import { formatDate } from "../utilities";
 import Tweet from "../components/Tweet";
@@ -23,8 +23,11 @@ interface UserProfile {
 
 export default function UserProfile() {
   const { authToken, setAuthToken } = useContext(userAuth);
+  const { userInfo, setUserInfo } = useContext(user);
+
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [currentTab, setCurrentTab] = useState("All Posts");
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const [tweets, setTweets] = useState([]);
 
@@ -35,10 +38,9 @@ export default function UserProfile() {
       .get(`/api/profiles/${username}`)
       .then((response) => {
         setProfileData(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }
 
@@ -62,14 +64,58 @@ export default function UserProfile() {
         setCurrentTab("Likes");
       })
       .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  function followToggle() {
+    axios
+      .post(
+        `/api/profiles/${username}/follow`,
+        {},
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        window.location.reload();
+      })
+      .catch((error) => {
         console.log(error);
       });
+  }
+
+  function isCurrentUser() {
+    if (userInfo.username !== profileData?.username) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function checkFollowing() {
+    axios
+      .get(`/api/profiles/${username}/followers`)
+      .then((response) => {
+        response.data.map((user: { username: string }) => {
+          if (user.username === userInfo.username) {
+            setIsFollowing(true);
+          }
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    setIsFollowing(false);
   }
 
   useEffect(() => {
     fetchProfileData();
     fetchUserTweets();
-  }, []);
+    checkFollowing();
+  }, [userInfo]);
 
   return (
     <>
@@ -81,9 +127,24 @@ export default function UserProfile() {
               src={profileData.profile.image}
               className="absolute top-[30px] left-[20px] h-32 w-32 rounded-full"
             ></img>
-            <button className="absolute right-4 mt-4 rounded-lg bg-blue-600 px-4 py-2">
-              Follow
-            </button>
+            {isCurrentUser() ? (
+              isFollowing ? (
+                <button
+                  onClick={followToggle}
+                  className="absolute right-4 mt-4 rounded-lg bg-red-600 px-4 py-2"
+                >
+                  Unfollow
+                </button>
+              ) : (
+                <button
+                  onClick={followToggle}
+                  className="absolute right-4 mt-4 rounded-lg bg-blue-600 px-4 py-2"
+                >
+                  Follow
+                </button>
+              )
+            ) : null}
+
             <div className="mt-[65px] ml-4 text-white">
               <div className=" text-2xl font-bold">
                 {profileData.profile.name}
@@ -123,7 +184,7 @@ export default function UserProfile() {
             </button>
           </div>
           {tweets.map((tweet) => {
-            if (!tweet["parent_tweet"]) {
+            if (currentTab === "Likes" || !tweet["parent_tweet"]) {
               return <Tweet tweetData={tweet} />;
             }
           })}

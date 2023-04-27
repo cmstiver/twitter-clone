@@ -20,7 +20,7 @@ export default function HomePage() {
         setCurrentTab("All Posts");
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }
 
@@ -36,7 +36,7 @@ export default function HomePage() {
         setCurrentTab("My Feed");
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }
 
@@ -71,7 +71,9 @@ export default function HomePage() {
       <TweetForm />
 
       {tweets.map((tweet) => {
-        return <Tweet tweetData={tweet} />;
+        if (!tweet["parent_tweet"]) {
+          return <Tweet tweetData={tweet} />;
+        }
       })}
     </>
   );
