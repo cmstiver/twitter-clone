@@ -2,7 +2,7 @@
 	"name": "verse-twitter-clone",
 	"version": "1.0.0",
 	"scripts": {
-		"heroku-postbuild": "cd frontend && npm install && npm install -g typescript && npm install -g vite && npm run build"
+		"heroku-postbuild": "cd frontend && npm install && npm run build"
 	},
 	"engines": {
 		"node": "18.15.0"
