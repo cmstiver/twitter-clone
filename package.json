@@ -1,0 +1,7 @@
+{
+	"name": "verse-twitter-clone",
+	"version": "1.0.0",
+	"scripts": {
+		"heroku-postbuild": "cd frontend && npm install && npm run build"
+	}
+}
