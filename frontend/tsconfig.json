@@ -17,6 +17,7 @@
       "dom.iterable",
       "esnext"
     ],
+    "typeRoots": ["./node_modules/@types", "./types"],
     "baseUrl": "./",
     "paths": {
       "*": ["src/*"]
