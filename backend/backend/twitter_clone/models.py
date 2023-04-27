@@ -1,20 +1,39 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count
+import requests
+from django.core.files.base import ContentFile
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import random
+import string
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=15)
-    image = models.ImageField(upload_to='profile_images/',
-                              default='default.webp')
+    image = models.ImageField(upload_to='profile_images/')
     bio = models.CharField(max_length=160, default="")
     location = models.CharField(max_length=40, default="")
     website_url = models.URLField(max_length=75, default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def set_image_from_url(self):
+        random_string = random.choices(string.ascii_lowercase)
+        url = f'https://api.dicebear.com/6.x/fun-emoji/svg?seed={random_string}'
+        response = requests.get(url)
+        if response.status_code == 200:
+            self.image.save(f'{self.user.username}.svg',
+                            ContentFile(response.content), save=True)
+
     def __str__(self):
         return f"{self.name}'s profile"
+
+
+@receiver(post_save, sender=Profile)
+def set_profile_image(sender, instance, created, **kwargs):
+    if created:
+        instance.set_image_from_url()
 
 
 class Tweet(models.Model):
