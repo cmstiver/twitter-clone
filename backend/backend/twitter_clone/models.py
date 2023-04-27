@@ -20,6 +20,8 @@ class Profile(models.Model):
 
     def set_image_from_url(self):
         random_string = random.choices(string.ascii_lowercase)
+        for x in range(10):
+            random_string += random.choices(string.ascii_lowercase)
         url = f'https://api.dicebear.com/6.x/fun-emoji/svg?seed={random_string}'
         response = requests.get(url)
         if response.status_code == 200:
