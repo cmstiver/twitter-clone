@@ -9,26 +9,29 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="bg fixed bottom-0 w-full justify-center bg-[#16161d] lg:flex lg:h-screen lg:w-[200px]">
-      <ul className="flex w-full justify-around">
+    <nav className="fixed bottom-0 w-full justify-center bg-[#16161d] lg:relative lg:flex lg:h-screen lg:w-[200px]">
+      <ul className="flex w-full justify-around py-2 lg:flex-col lg:justify-start">
         <li>
           <Link to="/home">
-            <button className="material-symbols-outlined p-5 text-4xl text-white">
-              home
+            <button className="flex items-center rounded-md p-2 text-white hover:bg-[#21212e]">
+              <span className="material-symbols-outlined text-4xl">home</span>
+              <span className="hidden text-xl lg:block">Home</span>
             </button>
           </Link>
         </li>
         <li>
-          <button className="material-symbols-outlined p-5 text-4xl text-white">
-            person
+          <button className="flex items-center rounded-md p-2 text-white hover:bg-[#21212e]">
+            <span className="material-symbols-outlined text-4xl">person</span>
+            <span className="hidden text-xl lg:block">Profile</span>
           </button>
         </li>
         <li>
           <button
-            className="material-symbols-outlined p-5 text-4xl text-white"
+            className="flex items-center rounded-md p-2 text-white hover:bg-[#21212e]"
             onClick={handleLogout}
           >
-            logout
+            <span className="material-symbols-outlined text-4xl">logout</span>
+            <span className="hidden text-xl lg:block">Logout</span>
           </button>
         </li>
       </ul>

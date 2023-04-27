@@ -7,6 +7,8 @@ import { userAuth } from "../App";
 export default function HomePage() {
   const { authToken, setAuthToken } = useContext(userAuth);
 
+  const [currentTab, setCurrentTab] = useState("All Posts");
+
   const [tweets, setTweets] = useState([]);
 
   function fetchAllTweets() {
@@ -14,6 +16,7 @@ export default function HomePage() {
       .get("/api/tweets")
       .then((response) => {
         setTweets(response.data);
+        setCurrentTab("All Posts");
       })
       .catch((error) => {
         console.log(error);
@@ -29,6 +32,7 @@ export default function HomePage() {
       })
       .then((response) => {
         setTweets(response.data);
+        setCurrentTab("My Feed");
       })
       .catch((error) => {
         console.log(error);
@@ -44,13 +48,21 @@ export default function HomePage() {
       <div className="flex">
         <button
           onClick={fetchAllTweets}
-          className="border-r-1 flex flex-grow justify-center border-b-2 py-5 text-white"
+          className={`border-r-1 flex flex-grow justify-center border-b-8 py-5 text-white ${
+            currentTab === "All Posts"
+              ? "border-b-8 border-blue-400 bg-[#2c2c39]"
+              : ""
+          }`}
         >
           All Posts
         </button>
         <button
           onClick={fetchFollowingTweets}
-          className="flex flex-grow justify-center border-l-2 border-b-2 py-5 text-white"
+          className={`flex flex-grow justify-center border-b-8 py-5 text-white ${
+            currentTab === "My Feed"
+              ? "border-b-8 border-blue-400 bg-[#2c2c39]"
+              : ""
+          }`}
         >
           My Feed
         </button>
