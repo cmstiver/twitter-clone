@@ -33,7 +33,7 @@ VITE_APP_DIR = os.path.join(BASE_DIR, '..', '..', 'frontend')
 SECRET_KEY = env['django']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 
@@ -41,7 +41,6 @@ ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 # Application definition
 
 INSTALLED_APPS = [
-    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -91,16 +90,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        # 'NAME': '<DATABASE>',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'twitter_db',
         # 'USER': '<USER>',
         # 'PASSWORD': '<PASSWORD>',
         # 'HOST': '<HOST>',
         # 'PORT': '5432',
     }
 }
-DATABASES['default'] = dj_database_url.config(
-    conn_max_age=600, ssl_require=True)
+# DATABASES['default'] = dj_database_url.config(
+#     conn_max_age=600, ssl_require=True)
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -156,4 +155,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-django_on_heroku.settings(locals(), staticfiles=False)
+# django_on_heroku.settings(locals(), staticfiles=False)
