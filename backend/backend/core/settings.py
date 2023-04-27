@@ -23,7 +23,8 @@ env = os.environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-VITE_APP_DIR = os.path.join(BASE_DIR, '..', 'frontend')
+VITE_APP_DIR = os.path.join(BASE_DIR, '..', '..', 'frontend')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -90,14 +91,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '<DATABASE>',
-        'USER': '<USER>',
-        'PASSWORD': '<PASSWORD>',
-        'HOST': '<HOST>',
-        'PORT': '5432',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': '<DATABASE>',
+        # 'USER': '<USER>',
+        # 'PASSWORD': '<PASSWORD>',
+        # 'HOST': '<HOST>',
+        # 'PORT': '5432',
     }
 }
+DATABASES['default'] = dj_database_url.config(
+    conn_max_age=600, ssl_require=True)
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
