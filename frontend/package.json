@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "postinstall": "npm install -g typescript",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
