@@ -15,7 +15,6 @@ import os
 from dotenv import load_dotenv
 import dj_database_url
 import django_on_heroku
-django_on_heroku.settings(locals())
 
 load_dotenv()
 
@@ -25,6 +24,8 @@ env = os.environ
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 VITE_APP_DIR = os.path.join(BASE_DIR.parent.parent, 'frontend')
+
+django_on_heroku.settings(locals())
 
 
 # Quick-start development settings - unsuitable for production
