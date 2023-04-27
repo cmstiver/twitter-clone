@@ -14,6 +14,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "*": ["src/*", "node_modules/*"]
     }
