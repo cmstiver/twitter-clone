@@ -15,6 +15,8 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
+import mimetypes
+mimetypes.add_type("application/javascript", ".js", True)
 
 load_dotenv()
 
