@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import NavBar from "./components/NavBar";
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 
 export const userAuth = createContext({
@@ -79,6 +79,9 @@ function App() {
   const location = useLocation();
 
   const fetchData = async () => {
+    if (!authToken) {
+      return;
+    }
     try {
       const response = await axios.get("/api/my-profile", {
         headers: {

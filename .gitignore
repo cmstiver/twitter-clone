@@ -3,6 +3,8 @@
 **/migrations
 backend/backend/media
 backend/backend/static
+backend/backend/staticfiles
+
 **/.env
 
 # Logs

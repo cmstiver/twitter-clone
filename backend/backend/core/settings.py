@@ -10,18 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import django_on_heroku
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
+import mimetypes
+mimetypes.add_type("application/javascript", ".js", True)
 
 load_dotenv()
 
 env = os.environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-VITE_APP_DIR = os.path.join(BASE_DIR.parent.parent, 'frontend')
+VITE_APP_DIR = os.path.join(BASE_DIR, '..', '..', 'frontend')
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,7 +37,7 @@ SECRET_KEY = env['django']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'verse-twitter-clone.herokuapp.com']
 
 
 # Application definition
@@ -53,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,14 +92,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env['dbname'],
-        'USER': env['dbuser'],
-        'PASSWORD': env['dbpassword'],
-        'HOST': env['dbhost'],
-        'PORT': env['dbport'],
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'twitter_db',
+        # 'USER': '<USER>',
+        # 'PASSWORD': '<PASSWORD>',
+        # 'HOST': '<HOST>',
+        # 'PORT': '5432',
     }
 }
+# DATABASES['default'] = dj_database_url.config(
+#     conn_max_age=600, ssl_require=True)
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -137,7 +144,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/assets/'
-STATICFILES_DIRS = [os.path.join(VITE_APP_DIR, 'dist', 'assets')]
+STATICFILES_DIRS = (os.path.join(VITE_APP_DIR, 'dist', 'assets'),)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = (
+    'whitenoise.storage.CompressedManifestStaticFilesStorage')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -147,3 +157,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# django_on_heroku.settings(locals(), staticfiles=False)
