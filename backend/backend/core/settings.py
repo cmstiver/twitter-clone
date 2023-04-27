@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
-import django_on_heroku
+import django_heroku
 
 load_dotenv()
 
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'frontend_app',
     'rest_framework',
     'rest_framework.authtoken',
-    # 'whitenoise.runserver_nostatic'
+    'whitenoise.runserver_nostatic'
 ]
 
 MIDDLEWARE = [
@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -145,7 +145,7 @@ USE_TZ = True
 STATIC_URL = '/assets/'
 STATICFILES_DIRS = [os.path.join(VITE_APP_DIR, 'dist', 'assets')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -156,4 +156,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-django_on_heroku.settings(locals())
+django_heroku.settings(locals())
