@@ -33,7 +33,7 @@ VITE_APP_DIR = os.path.join(BASE_DIR, '..', '..', 'frontend')
 SECRET_KEY = env['django']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 
@@ -90,8 +90,8 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'twitter_db',
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'twitter_db',
         # 'USER': '<USER>',
         # 'PASSWORD': '<PASSWORD>',
         # 'HOST': '<HOST>',
@@ -155,4 +155,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# django_on_heroku.settings(locals(), staticfiles=False)
+django_on_heroku.settings(locals(), staticfiles=False)
